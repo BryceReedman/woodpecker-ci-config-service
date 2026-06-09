@@ -1,5 +1,6 @@
 *.out
 .envrc
+.idea/
 dist/
 testenv/conf/legacy
 testenv/volumes/minio/*
