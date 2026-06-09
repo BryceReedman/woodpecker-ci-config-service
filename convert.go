@@ -119,6 +119,7 @@ func (p StarlarkConverter) Convert(f File, env Environment) ([]File, error) {
 					"branch":  starlark.String(env.Pipeline.Branch),
 					"message": starlark.String(env.Pipeline.Message),
 					"sender":  starlark.String(env.Pipeline.Sender),
+					"cron":    starlark.String(env.Pipeline.Cron),
 				}),
 			},
 		),
