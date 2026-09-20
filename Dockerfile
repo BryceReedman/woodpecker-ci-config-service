@@ -24,5 +24,10 @@ LABEL maintainer="OpenCloud GmbH <devops@opencloud.eu>" \
 
 COPY --from=build /opencloud-eu/woodpecker-config-service/bin/wccs /usr/bin/wccs
 
+# scratch carries no root CAs, so every https forge call would die with
+# "certificate signed by unknown authority" — the forge provider is useless
+# without these.
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
 EXPOSE 8080/tcp
 ENTRYPOINT ["wccs"]
