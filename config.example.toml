@@ -39,6 +39,13 @@
 # ENV: WCCS_SERVER_PROVIDER_FS_SOURCE="..."
 # source="..."
 
+[server.provider.forge]
+
+# define the forgejo server url, enables the forgejo forge when set
+# DEFAULT: ""
+# ENV: WCCS_SERVER_PROVIDER_FORGE_FORGEJO_URL="..."
+# forgejo_url="..."
+
 [convert]
 
 # define the provider types the converter should use
@@ -53,3 +60,10 @@
 # DEFAULT: ""
 # ENV: WCCS_CONVERT_PROVIDER_FS_SOURCE="..."
 # source="..."
+
+[convert.provider.forge]
+
+# define the forgejo server url, enables the forgejo forge when set
+# DEFAULT: ""
+# ENV: WCCS_CONVERT_PROVIDER_FORGE_FORGEJO_URL="..."
+# forgejo_url="..."

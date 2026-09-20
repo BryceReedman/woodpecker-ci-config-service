@@ -27,6 +27,7 @@ import (
 	"github.com/bmatcuk/doublestar/v4"
 	"github.com/samber/lo"
 	"go.woodpecker-ci.org/woodpecker/v3/server/forge"
+	"go.woodpecker-ci.org/woodpecker/v3/server/forge/forgejo"
 	"go.woodpecker-ci.org/woodpecker/v3/server/forge/github"
 	"go.woodpecker-ci.org/woodpecker/v3/server/model"
 	"golang.org/x/sync/errgroup"
@@ -75,7 +76,9 @@ type ForgeProvider struct {
 }
 
 // NewForgeProvider returns a new ForgeProvider.
-func NewForgeProvider(logger *slog.Logger) (ForgeProvider, error) {
+// The Forgejo forge is only registered when forgejoURL is set; without a URL
+// there is no instance to talk to, and the provider stays github-only.
+func NewForgeProvider(logger *slog.Logger, forgejoURL string) (ForgeProvider, error) {
 	forgeTypeGithub, err := github.New(0, github.Opts{
 		URL:      "https://github.com",
 		MergeRef: true,
@@ -84,11 +87,24 @@ func NewForgeProvider(logger *slog.Logger) (ForgeProvider, error) {
 		return ForgeProvider{}, err
 	}
 
+	forges := map[model.ForgeType]forge.Forge{
+		model.ForgeTypeGithub: forgeTypeGithub,
+	}
+
+	if forgejoURL != "" {
+		forgeTypeForgejo, err := forgejo.New(0, forgejo.Opts{
+			URL: forgejoURL,
+		})
+		if err != nil {
+			return ForgeProvider{}, err
+		}
+
+		forges[model.ForgeTypeForgejo] = forgeTypeForgejo
+	}
+
 	return ForgeProvider{
 		logger: logger,
-		forges: map[model.ForgeType]forge.Forge{
-			model.ForgeTypeGithub: forgeTypeGithub,
-		},
+		forges: forges,
 	}, nil
 }
 

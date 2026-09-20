@@ -43,6 +43,11 @@ type serverConfiguration struct {
 			// the file system source.
 			Source string
 		}
+		// forge provider configuration.
+		Forge struct {
+			// the forgejo server url, enables the forgejo forge when set.
+			ForgejoURL string `mapstructure:"forgejo_url"`
+		}
 	}
 }
 
@@ -56,7 +61,7 @@ var serverCmd = &cobra.Command{
 
 		var providers wccs.Providers
 		if slices.Contains(cfg.Server.Providers, wccs.ProviderTypeForge) {
-			providers = append(providers, wccs.Must1(wccs.NewForgeProvider(logger)))
+			providers = append(providers, wccs.Must1(wccs.NewForgeProvider(logger, cfg.Server.Provider.Forge.ForgejoURL)))
 		}
 
 		if slices.Contains(cfg.Server.Providers, wccs.ProviderTypeFS) {
@@ -88,6 +93,7 @@ func init() {
 	viper.SetDefault("server.config_endpoint_methods", []string{http.MethodPost})
 	viper.SetDefault("server.providers", []wccs.ProviderType{wccs.ProviderTypeForge})
 	viper.SetDefault("server.provider.fs.source", "")
+	viper.SetDefault("server.provider.forge.forgejo_url", "")
 
 	rootCmd.AddCommand(serverCmd)
 }

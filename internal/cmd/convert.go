@@ -39,6 +39,11 @@ type convertConfiguration struct {
 			// the file system source.
 			Source string
 		}
+		// forge provider configuration.
+		Forge struct {
+			// the forgejo server url, enables the forgejo forge when set.
+			ForgejoURL string `mapstructure:"forgejo_url"`
+		}
 	}
 }
 
@@ -63,7 +68,7 @@ var convertCmd = &cobra.Command{
 
 		var providers wccs.Providers
 		if slices.Contains(cfg.Convert.Providers, wccs.ProviderTypeForge) {
-			providers = append(providers, wccs.Must1(wccs.NewForgeProvider(logger)))
+			providers = append(providers, wccs.Must1(wccs.NewForgeProvider(logger, cfg.Convert.Provider.Forge.ForgejoURL)))
 		}
 
 		if slices.Contains(cfg.Convert.Providers, wccs.ProviderTypeFS) {
@@ -113,6 +118,7 @@ var convertCmd = &cobra.Command{
 func init() {
 	viper.SetDefault("convert.providers", []wccs.ProviderType{wccs.ProviderTypeForge})
 	viper.SetDefault("convert.provider.fs.source", "")
+	viper.SetDefault("convert.provider.forge.forgejo_url", "")
 
 	convertCmd.Flags().String("out", "", "output directory path")
 
